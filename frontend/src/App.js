@@ -9,6 +9,7 @@ import Admin from "./components/admin/Admin";
 import NotFoundPage from "./components/NotFoundPage/NotFoundPage";
 import Teacher from "./components/Teacher/Teacher";
 
+
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
