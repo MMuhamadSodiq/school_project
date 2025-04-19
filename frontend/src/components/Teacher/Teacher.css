@@ -1,0 +1,12 @@
+.teacher {
+    width: 100%;
+    height: 100%;
+    box-shadow: 0 2px 18px white;   
+    border-radius: 20px;
+    background-color: white;
+}
+.teacher .teacher_header {
+    display: flex;
+    justify-content: end;
+    padding: 20px;
+}

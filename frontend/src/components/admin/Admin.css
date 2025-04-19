@@ -1,0 +1,59 @@
+.header {
+    display: flex;
+    width: 100%;
+    height: 70px;
+    align-items:center;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: white;
+}
+.admin .menu {
+    font-size: 27px;
+    color: white;
+    text-align: center;
+    padding: 5px;
+}
+.admin {
+    width: 100%;
+    background-color: #ecf0f4;
+    display: flex;
+    height: 100vh;
+}
+.sidebar {
+    height: 100%;
+    background:#181824;
+    width: 100px;
+}
+.sidebar .item .text {
+    padding: 5px;
+    text-align: center;
+}
+.sidebar .item {
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    color: white;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items:center;
+    min-height: 100px;
+    transition: 0.3s all;
+}
+.sidebar .item:hover {
+    transition: 0.3s all;
+    color: #181824;
+    background: white;
+    animation-timing-function: ease-out;
+}
+.sidebar .item i {
+    font-size: 100px;
+}
+.admin .right {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.admin .right .body {
+    padding: 20px;
+}
