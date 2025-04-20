@@ -23,7 +23,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build:github": "CI=false react-scripts build"
+    "build:github": "SERVER_IP=http://51.20.78.85:8080/api CI=false react-scripts build"
   },
   "eslintConfig": {
     "extends": [

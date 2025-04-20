@@ -15,6 +15,7 @@ function App() {
   const location = useLocation();
   const [checking, setChecking] = useState(false);
   useEffect(() => {
+    console.log(domen);
     const token = localStorage.getItem("token");
     if (token) {
       // Hedader Init
