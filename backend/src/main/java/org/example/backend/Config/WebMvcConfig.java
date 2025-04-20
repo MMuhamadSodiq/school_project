@@ -16,38 +16,50 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by rajeevkumarsingh on 02/08/17.
+ * WebMvc configuration for CORS and SPA resource handling.
  */
-
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("*").allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH");
+        registry.addMapping("/**")
+                .allowedOriginPatterns("*") // modern way instead of allowedOrigins("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH");
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/**")
                 .addResourceLocations("classpath:/static/")
-                //                .setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
                 .resourceChain(false)
                 .addResolver(new PushStateResourceResolver());
     }
 
-    private class PushStateResourceResolver implements ResourceResolver {
-        private Resource index = new ClassPathResource("/static/index.html");
-        private List<String> handledExtensions = Arrays.asList("html", "js", "json", "csv", "css", "png", "svg", "eot", "ttf", "otf", "woff", "appcache", "jpg", "jpeg", "gif", "ico");
-        private List<String> ignoredPaths = Arrays.asList("api");
+    private static class PushStateResourceResolver implements ResourceResolver {
+        private final Resource index = new ClassPathResource("/static/index.html");
+        private final List<String> handledExtensions = Arrays.asList(
+                "html", "js", "json", "csv", "css", "png", "svg",
+                "eot", "ttf", "otf", "woff", "appcache", "jpg", "jpeg", "gif", "ico"
+        );
+        private final List<String> ignoredPaths = List.of("api");
 
         @Override
-        public Resource resolveResource(HttpServletRequest request, String requestPath, List<? extends Resource> locations, ResourceResolverChain chain) {
+        public Resource resolveResource(
+                HttpServletRequest request,
+                String requestPath,
+                List<? extends Resource> locations,
+                ResourceResolverChain chain
+        ) {
             return resolve(requestPath, locations);
         }
 
         @Override
-        public String resolveUrlPath(String resourcePath, List<? extends Resource> locations, ResourceResolverChain chain) {
+        public String resolveUrlPath(
+                String resourcePath,
+                List<? extends Resource> locations,
+                ResourceResolverChain chain
+        ) {
             Resource resolvedResource = resolve(resourcePath, locations);
             if (resolvedResource == null) {
                 return null;
@@ -63,13 +75,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
             if (isIgnored(requestPath)) {
                 return null;
             }
+
             if (isHandled(requestPath)) {
                 return locations.stream()
                         .map(loc -> createRelative(loc, requestPath))
                         .filter(resource -> resource != null && resource.exists())
                         .findFirst()
-                        .orElseGet(null);
+                        .orElse(null);
             }
+
             return index;
         }
 
@@ -82,13 +96,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
         }
 
         private boolean isIgnored(String path) {
-            return ignoredPaths.contains(path);
+            return ignoredPaths.stream().anyMatch(path::startsWith);
         }
 
         private boolean isHandled(String path) {
             String extension = StringUtils.getFilenameExtension(path);
-            return handledExtensions.stream().anyMatch(ext -> ext.equals(extension));
+            return extension != null && handledExtensions.contains(extension);
         }
     }
-
 }
