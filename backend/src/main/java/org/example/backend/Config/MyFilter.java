@@ -29,27 +29,48 @@ public class MyFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = request.getHeader("token");
-        if (token != null && token != "") {
-            Claims body = null;
-            try {
-                body = Jwts.parserBuilder()
-                        .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
-                        .build()
-                        .parseClaimsJws(token)
-                        .getBody();
-            } catch (ExpiredJwtException e) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        String requestPath = request.getRequestURI();
+        if (requestPath.startsWith("/api")) {
+            if (isOpenUrl(requestPath)) {
+                try {
+                    filterChain.doFilter(request, response);
+                } catch (Exception e) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized
+                    response.getWriter().write("Invalid token");
+                    response.getWriter().flush();
+                    return;
+                }
                 return;
             }
-            String username = body.get("iss").toString();
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                    userDetails,
-                    null,
-                    userDetails.getAuthorities()
-            );
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            if (token != null && token != "") {
+                Claims body = null;
+                try {
+                    body = Jwts.parserBuilder()
+                            .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                            .build()
+                            .parseClaimsJws(token)
+                            .getBody();
+                } catch (ExpiredJwtException e) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
+                }
+                String username = body.get("iss").toString();
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities()
+                );
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            }
         }
         filterChain.doFilter(request, response);
+    }
+    private static boolean isOpenUrl(String requestPath) {
+        return requestPath.equals("/api/auth/login")
+                || requestPath.startsWith("/api/file/getFile")
+                || requestPath.equals("/api/auth/access")
+                || requestPath.equals("/api/auth/refresh")
+                || requestPath.equals("/api/bot");
     }
 }
