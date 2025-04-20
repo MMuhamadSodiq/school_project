@@ -36,7 +36,7 @@ jobs:
           # Remove existing files in the backend's static folder
           rm -rf ../backend/src/main/resources/static/*
           # Copy new build files to the backend's static folder
-          cp -r frontend/build/* ../backend/src/main/resources/static
+          cp -r build/* ../backend/src/main/resources/static
         working-directory: ${{ github.workspace }}/frontend
 
       - name: Set up Java 17
