@@ -15,4 +15,4 @@ root.render(
   </BrowserRouter>
   
 );
-export const domen = "http://localhost:8080/api"
+export const domen = process.env.REACT_APP_SERVER_IP || "http://localhost:8080/api";
