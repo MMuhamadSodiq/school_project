@@ -33,8 +33,8 @@ const LoginPage = () => {
   return (
     <div className="login">
       <div className="container">
-        <div className="row">
-          <div className="col-lg-3 col-md-2"></div>
+        <div className="row col-12 m-1">
+          <div className="col-lg-3 col-md-2 "></div>
           <div className="col-lg-6 col-md-8 login-box">
             <div className="col-lg-12 login-key">
               <i className="fa fa-key" aria-hidden="true"></i>

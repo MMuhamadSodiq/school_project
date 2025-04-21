@@ -2,6 +2,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { FaUserGraduate } from "react-icons/fa";
 import { BsCalendarEvent } from "react-icons/bs";
 import { FaUser } from "react-icons/fa";
+import { FiLogOut } from "react-icons/fi";
 import "./Admin.css";
 const Admin = () => {
   const navigate = useNavigate();
@@ -29,8 +30,9 @@ const Admin = () => {
       <div className="right">
         <div className="header">
           <h2>Admin Panel</h2>
-          <button className="btn btn-danger" onClick={logout}>
+          <button className="d-flex gap-2 align-items-center btn btn-danger" onClick={logout}>
             Chiqish
+            <FiLogOut />
           </button>
         </div>
         <div className="body">
