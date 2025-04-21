@@ -20,6 +20,7 @@ public class TeacherController {
     public ResponseEntity<?> create(@RequestBody TeacherDTO dto){
         Teacher saved = teacherRepo.save(new Teacher(
                 null,
+                null,
                 dto.getFirstname(),
                 dto.getLastname()
         ));
@@ -30,6 +31,7 @@ public class TeacherController {
         Optional<Teacher> byId = teacherRepo.findById(id);
         if(byId.isPresent()){
             Teacher saved = teacherRepo.save(new Teacher(
+                    null,
                     byId.get().getId(),
                     dto.getFirstname(),
                     dto.getLastname()
@@ -41,7 +43,7 @@ public class TeacherController {
     }
     @GetMapping("/api/teachers")
     public ResponseEntity<?> getAll(){
-        List<Teacher> teachers = teacherRepo.findAll();
+        List<Teacher> teachers = teacherRepo.findAllByOrderByCreatedDateAscFirstNameAscLastNameAsc();
         return new ResponseEntity<>(teachers,HttpStatus.OK);
     }
     @DeleteMapping("/api/teacher/{id}")
