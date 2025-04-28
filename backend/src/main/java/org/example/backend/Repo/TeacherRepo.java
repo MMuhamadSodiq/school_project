@@ -10,4 +10,5 @@ import java.util.UUID;
 @Repository
 public interface TeacherRepo extends JpaRepository<Teacher, UUID> {
     List<Teacher> findAllByOrderByCreatedDateAscFirstNameAscLastNameAsc();
+    List<Teacher> findAllByFirstNameLikeIgnoreCase(String firstName);
 }
