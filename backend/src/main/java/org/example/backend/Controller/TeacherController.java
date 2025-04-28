@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,43 +17,52 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TeacherController {
     private final TeacherRepo teacherRepo;
+
     @PostMapping("/api/teacher")
-    public ResponseEntity<?> create(@RequestBody TeacherDTO dto){
+    public ResponseEntity<?> create(@RequestBody TeacherDTO dto) {
         Teacher saved = teacherRepo.save(new Teacher(
                 null,
                 null,
                 dto.getFirstname(),
                 dto.getLastname()
         ));
-        return new ResponseEntity<>(saved,HttpStatus.OK);
+        return new ResponseEntity<>(saved, HttpStatus.OK);
     }
+
     @PostMapping("/api/teacher/{id}")
-    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody TeacherDTO dto){
+    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody TeacherDTO dto) {
         Optional<Teacher> byId = teacherRepo.findById(id);
-        if(byId.isPresent()){
+        if (byId.isPresent()) {
             Teacher saved = teacherRepo.save(new Teacher(
                     null,
                     byId.get().getId(),
                     dto.getFirstname(),
                     dto.getLastname()
             ));
-            return new ResponseEntity<>(saved,HttpStatus.OK);
-        }else {
+            return new ResponseEntity<>(saved, HttpStatus.OK);
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
     @GetMapping("/api/teachers")
-    public ResponseEntity<?> getAll(){
-        List<Teacher> teachers = teacherRepo.findAllByOrderByCreatedDateAscFirstNameAscLastNameAsc();
-        return new ResponseEntity<>(teachers,HttpStatus.OK);
+    public ResponseEntity<?> getAll(@RequestParam String search) {
+        List<Teacher> teachers = new ArrayList<>();
+        if (search.isEmpty()) {
+             teachers = teacherRepo.findAllByOrderByCreatedDateAscFirstNameAscLastNameAsc();
+        }else {
+            teachers = teacherRepo.findAllByFirstNameLikeIgnoreCase(search);
+        }
+        return new ResponseEntity<>(teachers, HttpStatus.OK);
     }
+
     @DeleteMapping("/api/teacher/{id}")
-    public ResponseEntity<?> delete(@PathVariable UUID id){
+    public ResponseEntity<?> delete(@PathVariable UUID id) {
         Optional<Teacher> byId = teacherRepo.findById(id);
-        if(byId.isPresent()){
+        if (byId.isPresent()) {
             teacherRepo.deleteById(id);
             return new ResponseEntity<>(HttpStatus.OK);
-        }else {
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }

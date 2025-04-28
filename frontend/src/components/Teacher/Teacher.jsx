@@ -24,9 +24,15 @@ const Teacher = () => {
     lastname: "",
   });
   function draw() {
-    axios.get(domen + "/teachers").then((res) => {
+    axios.get(domen + "/teachers?search=").then((res) => {
       setTeachers(res.data);
     });
+  }
+
+  function search(input) {
+    apiCall("/teachers?search="+input,"GET").then(res=>{
+      setTeachers(res.data);
+    })
   }
 
   useEffect(() => {
@@ -75,7 +81,11 @@ const Teacher = () => {
   const handleShow = () => setShow(true);
   return (
     <div className="teacher">
-      <div className="teacher_header d-flex gap-2 justify-content-end">
+      <div className="teacher_header d-flex gap-2 justify-content-between">
+        <label className="d-flex align-items-center gap-1">
+          <span>Qidiruv:</span>
+          <input onChange={(e)=>search(e.target.value)} type="search" className="form-control" placeholder="Qidiruv..."/>
+        </label>
         <Button
           variant="primary"
           className="d-flex align-items-center gap-2"
